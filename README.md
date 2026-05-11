@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gozdarstvo Kurnik – Spletna stran
 
-## Getting Started
+Poslovna spletna stran za **Gozdarstvo Kurnik** (Blaž Kurnik, dopolnilna dejavnost, Zgornja Voličina). Narejeno kot celovita, stroškovno optimalna rešitev za stranko.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Ideja za stranko: brezplačni hosting + cenovna domena
+
+Cilj je bil stranki zagotoviti profesionalno spletno prisotnost ob **minimalnih letnih stroških** – samo cena domene.
+
+### Kako deluje
+
+1. **Koda je na GitHubu** (ta repozitorij, javen) – brezplačno
+2. **Hosting na Vercelu** – Vercel brezplačno hosta statične Next.js strani direkt iz GitHub repozitorija; ob vsakem pushu se stran samodejno posodobi
+3. **Domena** – kupljena na [hitrost.com](https://hitrost.com), nato v Vercel dashboardu dodana kot custom domain (DNS nastavitve se nastavijo na hitrost.com)
+
+**Stranka letno plača samo domeno** (~10–15 EUR/leto). Vse ostalo je brezplačno.
+
+---
+
+## Projekt
+
+Migracija obstoječe statične HTML strani v **Next.js 16** z App Routerjem, TypeScriptom in Tailwind CSS. Ohranjen original dizajn – dark zelena tema s Playfair Display in Inter fonti.
+
+### Tech stack
+
+| | |
+|---|---|
+| Framework | Next.js 16 (App Router, TypeScript) |
+| Styling | Tailwind CSS + globalni CSS z `:root` spremenljivkami |
+| Animacije | GSAP 3 + `@gsap/react` (ScrollTrigger) |
+| Mailing | Resend API |
+| Hosting | Vercel (free tier) |
+| Domena | hitrost.com → Vercel custom domain |
+
+### Struktura
+
+```
+src/
+├── app/
+│   ├── api/contact/route.ts   # POST endpoint → Resend (pošlje mail stranki)
+│   ├── globals.css            # :root CSS spremenljivke + globalni stili
+│   ├── layout.tsx             # Metadata, SEO, JSON-LD LocalBusiness, fonti
+│   └── page.tsx               # Root stran – importa vse komponente
+└── components/
+    ├── Navbar.tsx             # Fiksen navbar + hamburger meni + scroll-to-top
+    ├── Hero.tsx               # Hero sekcija, GSAP text reveal ob nalaganju
+    ├── About.tsx              # O podjetju, ScrollTrigger animacija
+    ├── Services.tsx           # 6 storitev + modal popup za vsako
+    ├── Gallery.tsx            # Foto galerija (bento layout) + lightbox
+    ├── Contact.tsx            # Kontaktni form → API route
+    └── Footer.tsx             # Footer z navigacijo
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Dizajn
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Dark zelena tema, originalni barvni sistem:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```css
+--green-dark:   #1a2e1a
+--green-mid:    #2d5016
+--green-accent: #4a7c2f
+--green-light:  #6aab3a
+--brown:        #8b5e3c
+--cream:        #f5f0e8
+```
 
-## Learn More
+### SEO
 
-To learn more about Next.js, take a look at the following resources:
+- Polni `metadata` objekt v `layout.tsx` (title, description, keywords, OpenGraph)
+- JSON-LD `LocalBusiness` schema za Google
+- Semantični HTML tagi po vseh sekcijah
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Kontaktni form
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Ob oddaji forme se pošlje email na strankin naslov via Resend API. Ključ je v `.env.local` (ni v repozitoriju).
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Moje delo
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Projekt je nastal kot demonstracija celovite rešitve za stranko – migracija obstoječe statične HTML strani v moderno tehnologijo z brezplačnim hostingom in minimalnimi letnimi stroški za stranko.
+
+**Tadej Čuš**
