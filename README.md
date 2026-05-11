@@ -1,60 +1,58 @@
-# Gozdarstvo Kurnik – Spletna stran
+# Gozdarstvo Kurnik – Business Website
 
-Poslovna spletna stran za **Gozdarstvo Kurnik** (Blaž Kurnik, dopolnilna dejavnost, Zgornja Voličina). Narejeno kot celovita, stroškovno optimalna rešitev za stranko.
-
----
-
-## Ideja za stranko: brezplačni hosting + cenovna domena
-
-Cilj je bil stranki zagotoviti profesionalno spletno prisotnost ob **minimalnih letnih stroških** – samo cena domene.
-
-### Kako deluje
-
-1. **Koda je na GitHubu** (ta repozitorij, javen) – brezplačno
-2. **Hosting na Vercelu** – Vercel brezplačno hosta statične Next.js strani direkt iz GitHub repozitorija; ob vsakem pushu se stran samodejno posodobi
-3. **Domena** – kupljena na [hitrost.com](https://hitrost.com), nato v Vercel dashboardu dodana kot custom domain (DNS nastavitve se nastavijo na hitrost.com)
-
-**Stranka letno plača samo domeno** (~10–15 EUR/leto). Vse ostalo je brezplačno.
+Website for **Gozdarstvo Kurnik** (Blaž Kurnik, forestry services, Zgornja Voličina, Slovenia). Built as an all-in-one, cost-minimal solution for the client.
 
 ---
 
-## Projekt
+## The deal for the client: free hosting + cheap domain
 
-Migracija obstoječe statične HTML strani v **Next.js 16** z App Routerjem, TypeScriptom in Tailwind CSS. Ohranjen original dizajn – dark zelena tema s Playfair Display in Inter fonti.
+The goal was a professional web presence at the **lowest possible annual cost** — just the domain.
+
+1. **Code on GitHub** (this repo, public) — free
+2. **Hosting on Vercel** — free tier, auto-deploys on every push
+3. **Domain** — purchased on [hitrost.com](https://hitrost.com), connected as a custom domain in Vercel dashboard
+
+**Client pays only the domain** (~€10–15/year). Everything else is free.
+
+---
+
+## Project
+
+Migration of an existing static HTML page to **Next.js 16** with App Router, TypeScript, and Tailwind CSS. Original design preserved — dark green theme with Playfair Display and Inter fonts.
 
 ### Tech stack
 
 | | |
 |---|---|
 | Framework | Next.js 16 (App Router, TypeScript) |
-| Styling | Tailwind CSS + globalni CSS z `:root` spremenljivkami |
-| Animacije | GSAP 3 + `@gsap/react` (ScrollTrigger) |
-| Mailing | Resend API |
+| Styling | Tailwind CSS + global CSS with `:root` variables |
+| Animations | GSAP 3 + `@gsap/react` (ScrollTrigger) |
+| Email | Resend API |
 | Hosting | Vercel (free tier) |
-| Domena | hitrost.com → Vercel custom domain |
+| Domain | hitrost.com → Vercel custom domain |
 
-### Struktura
+### Structure
 
 ```
 src/
 ├── app/
-│   ├── api/contact/route.ts   # POST endpoint → Resend (pošlje mail stranki)
-│   ├── globals.css            # :root CSS spremenljivke + globalni stili
-│   ├── layout.tsx             # Metadata, SEO, JSON-LD LocalBusiness, fonti
-│   └── page.tsx               # Root stran – importa vse komponente
+│   ├── api/contact/route.ts   # POST endpoint → Resend (sends email to client)
+│   ├── globals.css            # :root CSS variables + global styles
+│   ├── layout.tsx             # Metadata, SEO, JSON-LD LocalBusiness, fonts
+│   └── page.tsx               # Root page — imports all components
 └── components/
-    ├── Navbar.tsx             # Fiksen navbar + hamburger meni + scroll-to-top
-    ├── Hero.tsx               # Hero sekcija, GSAP text reveal ob nalaganju
-    ├── About.tsx              # O podjetju, ScrollTrigger animacija
-    ├── Services.tsx           # 6 storitev + modal popup za vsako
-    ├── Gallery.tsx            # Foto galerija (bento layout) + lightbox
-    ├── Contact.tsx            # Kontaktni form → API route
-    └── Footer.tsx             # Footer z navigacijo
+    ├── Navbar.tsx             # Fixed navbar + hamburger menu + scroll-to-top
+    ├── Hero.tsx               # Hero section, GSAP text reveal on load
+    ├── About.tsx              # About section, ScrollTrigger fade-in
+    ├── Services.tsx           # 6 services + modal popup per card
+    ├── Gallery.tsx            # Photo gallery (bento layout) + lightbox
+    ├── Contact.tsx            # Contact form → API route
+    └── Footer.tsx             # Footer with navigation
 ```
 
-### Dizajn
+### Design
 
-Dark zelena tema, originalni barvni sistem:
+Dark green color system:
 
 ```css
 --green-dark:   #1a2e1a
@@ -67,18 +65,14 @@ Dark zelena tema, originalni barvni sistem:
 
 ### SEO
 
-- Polni `metadata` objekt v `layout.tsx` (title, description, keywords, OpenGraph)
-- JSON-LD `LocalBusiness` schema za Google
-- Semantični HTML tagi po vseh sekcijah
+- Full `metadata` object in `layout.tsx` (title, description, keywords, OpenGraph)
+- JSON-LD `LocalBusiness` schema for Google
+- Semantic HTML tags throughout all sections
 
-### Kontaktni form
+### Contact form
 
-Ob oddaji forme se pošlje email na strankin naslov via Resend API. Ključ je v `.env.local` (ni v repozitoriju).
+On submission, sends an email to the client via Resend API. The API key lives in `.env.local` (not in the repo).
 
 ---
-
-## Moje delo
-
-Projekt je nastal kot demonstracija celovite rešitve za stranko – migracija obstoječe statične HTML strani v moderno tehnologijo z brezplačnim hostingom in minimalnimi letnimi stroški za stranko.
 
 **Tadej Čuš**
