@@ -16,20 +16,18 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: 'Gozdarstvo Kurnik – Blaž Kurnik, dopolnilna dejavnost',
+  metadataBase: new URL('https://gozdarstvo-kurnik.si'),
+  title: 'Gozdarstvo Kurnik',
   description:
-    'Profesionalne gozdarske storitve na območju vzhodne Štajerske. Sečnja, spravilo lesa, nega gozda, vzdrževanje gozdnih poti. Blaž Kurnik, dopolnilna dejavnost, Zgornja Voličina.',
+    'Profesionalne gozdarske storitve v Podravju. Sečnja, spravilo lesa, vzdrževanje gozdnih poti. Blaž Kurnik, Zgornja Voličina. Pokličite: 031 316 311',
   keywords: [
-    'gozdarstvo',
-    'sečnja',
+    'gozdarstvo Podravje',
+    'sečnja dreves Ptuj',
     'spravilo lesa',
-    'nega gozda',
-    'gozdne poti',
-    'drva',
-    'hlodovina',
-    'Blaž Kurnik',
-    'Zgornja Voličina',
-    'vzhodna Štajerska',
+    'gozdar Zgornja Voličina',
+    'Blaž Kurnik gozdarstvo',
+    'gozdarske storitve vzhodna Štajerska',
+    'gozdar okolica Ptuja',
   ],
   authors: [{ name: 'Blaž Kurnik' }],
   openGraph: {
@@ -38,27 +36,48 @@ export const metadata: Metadata = {
       'Sečnja, spravilo lesa, nega gozda in vzdrževanje gozdnih poti na območju vzhodne Štajerske.',
     locale: 'sl_SI',
     type: 'website',
+    images: ['/slike/web/blaz-na-harvesterju-gozd.jpg'],
   },
-  other: {
-    'application/ld+json': JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'LocalBusiness',
-      name: 'Gozdarstvo Kurnik',
-      description:
-        'Profesionalne gozdarske storitve – sečnja, spravilo lesa, nega gozda, vzdrževanje gozdnih poti.',
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: 'Zgornja Voličina 2',
-        postalCode: '2232',
-        addressLocality: 'Voličina',
-        addressCountry: 'SI',
-      },
-      telephone: '+38631316311',
-      email: 'blazkurnik14@gmail.com',
-      areaServed: 'Vzhodna Štajerska',
-      priceRange: 'Po dogovoru',
-    }),
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Gozdarstvo Kurnik – Sečnja in spravilo lesa | Podravje',
+    description:
+      'Profesionalne gozdarske storitve v Podravju. Sečnja, spravilo lesa, vzdrževanje gozdnih poti. Blaž Kurnik, Zgornja Voličina. Pokličite: 031 316 311',
+    images: ['/slike/web/blaz-na-harvesterju-gozd.jpg'],
   },
+};
+
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: 'Gozdarstvo Kurnik',
+  description: 'Profesionalne gozdarske storitve. Sečnja, spravilo lesa, vzdrževanje gozdnih poti.',
+  url: 'https://gozdarstvo-kurnik.si',
+  telephone: '+38631316311',
+  email: 'blazkurnik14@gmail.com',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Zgornja Voličina 2',
+    addressLocality: 'Voličina',
+    postalCode: '2232',
+    addressCountry: 'SI',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 46.4234,
+    longitude: 15.9823,
+  },
+  image: 'https://gozdarstvo-kurnik.si/slike/web/0-logotip.png',
+  logo: 'https://gozdarstvo-kurnik.si/slike/web/0-logotip.png',
+  areaServed: ['Podravje', 'Ptuj', 'Maribor', 'Vzhodna Štajerska'],
+  serviceType: ['Sečnja', 'Spravilo lesa', 'Vzdrževanje gozdnih poti', 'Nega gozda', 'Razrez hlodovine', 'Prodaja drv'],
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Gozdarstvo Kurnik',
+  url: 'https://gozdarstvo-kurnik.si',
 };
 
 export default function RootLayout({
@@ -66,6 +85,18 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="sl" className={`${inter.variable} ${playfair.variable}`}>
+      <head>
+        <link rel="icon" href="/slike/web/0-logotip.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/slike/web/0-logotip.png" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

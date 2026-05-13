@@ -97,7 +97,7 @@ export default function Hero() {
 
         <div className="hero-stats">
           <div className="stat-item">
-            <div className="stat-num" data-count="15" data-suffix="+">15+</div>
+            <div className="stat-num" data-count="7" data-suffix="+">7+</div>
             <div className="stat-label">Let izkušenj</div>
           </div>
           <div className="stat-divider" />

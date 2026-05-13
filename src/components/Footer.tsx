@@ -31,8 +31,13 @@ export default function Footer() {
           <div className="footer-copy">
             &copy; 2025 Gozdarstvo Kurnik &mdash; Blaž Kurnik, dopolnilna dejavnost. Vse pravice pridržane.
           </div>
-          <div className="footer-legal">
-            Zgornja Voličina 2, 2232 Voličina &bull; blazkurnik14@gmail.com
+          <div className="footer-sub">
+            <div className="footer-legal">
+              Zgornja Voličina 2, 2232 Voličina &bull; blazkurnik14@gmail.com
+            </div>
+            <div className="footer-credit">
+              Izdelava: <a href="https://cus.si" target="_blank" rel="noopener noreferrer">CUS</a>
+            </div>
           </div>
         </div>
       </div>

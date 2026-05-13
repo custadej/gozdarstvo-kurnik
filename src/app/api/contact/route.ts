@@ -8,7 +8,7 @@ export async function POST(request: Request) {
 
   const { error } = await resend.emails.send({
     from: 'Gozdarstvo Kurnik <onboarding@resend.dev>',
-    to: 'cus.tadej07@gmail.com',
+    to: 'blazkurnik14@gmail.com',
     replyTo: email,
     subject: 'Novo povpraševanje – Gozdarstvo Kurnik',
     text: [
