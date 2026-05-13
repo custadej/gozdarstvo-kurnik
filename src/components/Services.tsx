@@ -100,13 +100,17 @@ export default function Services() {
       gsap.set(cards, { opacity: 1, y: 0 });
       return;
     }
+    const mobile = window.innerWidth < 768;
     cards.forEach((el, i) => {
       gsap.fromTo(
         el,
         { opacity: 0, y: 36 },
         {
-          opacity: 1, y: 0, duration: 0.7, delay: i * 0.08, ease: 'power3.out',
-          scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+          opacity: 1, y: 0,
+          duration: mobile ? 0.35 : 0.7,
+          delay: i * (mobile ? 0.04 : 0.08),
+          ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: mobile ? 'top 95%' : 'top 88%', once: true },
         },
       );
     });

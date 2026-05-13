@@ -21,13 +21,16 @@ export default function Hero() {
       return;
     }
 
+    const mobile = window.innerWidth < 768;
+    const d = (v: number) => mobile ? v * 0.5 : v;
+
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-    tl.fromTo('.hero-badge',        { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.55 }, 0.25)
-      .fromTo('.hero-title .word',  { opacity: 0, y: 44 }, { opacity: 1, y: 0, duration: 0.65, stagger: 0.09 }, 0.45)
-      .fromTo('.hero-desc',         { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.55 }, 0.82)
-      .fromTo('.hero-actions',      { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.55 }, 1.0)
-      .fromTo('.hero-stats',        { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.55 }, 1.15);
+    tl.fromTo('.hero-badge',        { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: d(0.55) }, 0.25)
+      .fromTo('.hero-title .word',  { opacity: 0, y: 44 }, { opacity: 1, y: 0, duration: d(0.65), stagger: d(0.09) }, 0.45)
+      .fromTo('.hero-desc',         { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: d(0.55) }, 0.82)
+      .fromTo('.hero-actions',      { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: d(0.55) }, 1.0)
+      .fromTo('.hero-stats',        { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: d(0.55) }, 1.15);
 
     // Animate numeric counters only
     const counterEls = contentRef.current.querySelectorAll<HTMLElement>('[data-count]');
@@ -37,7 +40,7 @@ export default function Hero() {
       const counter = { val: 0 };
       gsap.to(counter, {
         val: target,
-        duration: 2,
+        duration: mobile ? 1 : 2,
         delay: 1.3,
         ease: 'power2.out',
         onUpdate() { el.textContent = Math.round(counter.val) + suffix; },

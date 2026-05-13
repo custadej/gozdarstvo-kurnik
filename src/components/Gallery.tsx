@@ -34,6 +34,7 @@ export default function Gallery() {
     if (!sectionRef.current) return;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    const mobile = window.innerWidth < 768;
     const animateItems = (items: NodeListOf<Element>) => {
       if (prefersReducedMotion) {
         gsap.set(items, { opacity: 1, y: 0 });
@@ -44,8 +45,11 @@ export default function Gallery() {
           el,
           { opacity: 0, y: 30 },
           {
-            opacity: 1, y: 0, duration: 0.6, delay: i * 0.07, ease: 'power3.out',
-            scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+            opacity: 1, y: 0,
+            duration: mobile ? 0.3 : 0.6,
+            delay: i * (mobile ? 0.035 : 0.07),
+            ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: mobile ? 'top 95%' : 'top 90%', once: true },
           },
         );
       });
@@ -107,7 +111,7 @@ export default function Gallery() {
         <p className="section-desc">Fotografije iz naših projektov v gozdu in na terenu.</p>
       </div>
 
-      <div className="gallery-masonry">
+      <div className={`gallery-masonry${showAll ? ' show-all' : ''}`}>
         {visibleImages.map((img, i) => (
           <div
             key={img.src}

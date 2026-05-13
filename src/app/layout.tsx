@@ -18,6 +18,11 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   metadataBase: new URL('https://gozdarstvo-kurnik.si'),
   title: 'Gozdarstvo Kurnik',
+  icons: {
+    icon: '/slike/web/0-logotip.png',
+    shortcut: '/slike/web/0-logotip.png',
+    apple: '/slike/web/0-logotip.png',
+  },
   description:
     'Profesionalne gozdarske storitve v Podravju. Sečnja, spravilo lesa, vzdrževanje gozdnih poti. Blaž Kurnik, Zgornja Voličina. Pokličite: 031 316 311',
   keywords: [
@@ -30,6 +35,9 @@ export const metadata: Metadata = {
     'gozdar okolica Ptuja',
   ],
   authors: [{ name: 'Blaž Kurnik' }],
+  verification: {
+    google: 'zN8MJ-IiIUY1ngN6usb8xwHuh5t8KpZ7PEyCNAr3kFI',
+  },
   openGraph: {
     title: 'Gozdarstvo Kurnik – Profesionalne gozdarske storitve',
     description:
@@ -86,8 +94,6 @@ export default function RootLayout({
   return (
     <html lang="sl" className={`${inter.variable} ${playfair.variable}`}>
       <head>
-        <link rel="icon" href="/slike/web/0-logotip.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/slike/web/0-logotip.png" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
