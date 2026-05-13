@@ -1,68 +1,106 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-
-const LogoSvg = () => (
-  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="50,8 30,38 40,38 25,62 38,62 22,85 78,85 62,62 75,62 60,38 70,38" fill="#6aab3a" />
-    <rect x="44" y="85" width="12" height="8" rx="2" fill="#8b5e3c" />
-    <rect x="54" y="48" width="34" height="8" rx="4" fill="none" stroke="#fff" strokeWidth="2.5" />
-    <rect x="84" y="46" width="8" height="12" rx="3" fill="none" stroke="#fff" strokeWidth="2" />
-    <line x1="60" y1="48" x2="60" y2="56" stroke="#fff" strokeWidth="1.5" />
-    <line x1="66" y1="48" x2="66" y2="56" stroke="#fff" strokeWidth="1.5" />
-    <line x1="72" y1="48" x2="72" y2="56" stroke="#fff" strokeWidth="1.5" />
-    <line x1="78" y1="48" x2="78" y2="56" stroke="#fff" strokeWidth="1.5" />
-  </svg>
-);
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const navLinksRef = useRef<HTMLUListElement>(null);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const scrollBtn = document.getElementById('scrollTop');
     const onScroll = () => {
-      if (scrollBtn) scrollBtn.classList.toggle('visible', window.scrollY > 400);
+      setScrolled(window.scrollY > 80);
+      const btn = document.getElementById('scrollTop');
+      if (btn) btn.classList.toggle('visible', window.scrollY > 400);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const closeMenu = () => setMenuOpen(false);
+  // Close menu on outside click
+  useEffect(() => {
+    if (!menuOpen) return;
+    const close = (e: MouseEvent) => {
+      if (!(e.target as HTMLElement).closest('nav')) setMenuOpen(false);
+    };
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, [menuOpen]);
+
+  const close = () => setMenuOpen(false);
 
   return (
-    <nav>
+    <nav className={scrolled ? 'scrolled' : ''}>
+      {/* Logo — always left */}
       <a href="#hero" className="nav-logo">
-        <LogoSvg />
+        <Image
+          src="/slike/web/0-logotip.png"
+          alt="Gozdarstvo Kurnik"
+          width={52}
+          height={52}
+          className="nav-logo-img"
+          priority
+          style={{ width: 'auto', height: '52px' }}
+        />
         <div className="nav-logo-text">
           <div className="name">Gozdarstvo Kurnik</div>
           <div className="sub">Blaž Kurnik, dop. dej.</div>
         </div>
       </a>
 
-      <ul ref={navLinksRef} className={`nav-links${menuOpen ? ' nav-open' : ''}`}>
-        <li><a href="#about" onClick={closeMenu}>O nas</a></li>
-        <li><a href="#services" onClick={closeMenu}>Storitve</a></li>
-        <li><a href="#gallery" onClick={closeMenu}>Galerija</a></li>
-        <li><a href="#contact" className="nav-cta" onClick={closeMenu}>Kontakt</a></li>
+      {/* Desktop nav — right side */}
+      <ul className="nav-links">
+        <li><a href="#about">O nas</a></li>
+        <li><a href="#services">Storitve</a></li>
+        <li><a href="#gallery">Galerija</a></li>
+        <li><a href="#contact" className="nav-cta">Kontakt</a></li>
       </ul>
 
-      <button
-        className="hamburger"
-        aria-label="Meni"
-        onClick={() => setMenuOpen(v => !v)}
-      >
-        <span />
-        <span />
-        <span />
-      </button>
+      {/* Mobile controls — right side */}
+      <div className="nav-mobile-ctrl">
+        <a href="tel:+38631316311" className="nav-call-btn" aria-label="Pokliči nas">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+            strokeLinecap="round" strokeLinejoin="round" width={15} height={15}>
+            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.09-1.09a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z" />
+          </svg>
+          Pokliči
+        </a>
+        <button
+          className={`hamburger${menuOpen ? ' is-open' : ''}`}
+          aria-label={menuOpen ? 'Zapri meni' : 'Odpri meni'}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(v => !v)}
+        >
+          <span /><span /><span />
+        </button>
+      </div>
+
+      {/* Mobile dropdown */}
+      {menuOpen && (
+        <ul className="nav-mobile-menu" onClick={close}>
+          <li><a href="#about">O nas</a></li>
+          <li><a href="#services">Storitve</a></li>
+          <li><a href="#gallery">Galerija</a></li>
+          <li><a href="#contact">Kontakt</a></li>
+          <li>
+            <a href="tel:+38631316311" className="nav-mobile-cta">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                strokeLinecap="round" strokeLinejoin="round" width={17} height={17}>
+                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.09-1.09a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z" />
+              </svg>
+              Pokličite nas: 031 316 311
+            </a>
+          </li>
+        </ul>
+      )}
 
       <button
         id="scrollTop"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="Na vrh"
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"
+          strokeLinecap="round" width={20} height={20}>
           <polyline points="18 15 12 9 6 15" />
         </svg>
       </button>

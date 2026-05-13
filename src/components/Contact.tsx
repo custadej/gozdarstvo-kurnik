@@ -13,22 +13,23 @@ export default function Contact() {
 
   useGSAP(() => {
     if (!sectionRef.current) return;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const items = sectionRef.current.querySelectorAll('.gsap-fade');
+    if (prefersReducedMotion) {
+      gsap.set(items, { opacity: 1, y: 0 });
+      return;
+    }
     items.forEach((el, i) => {
       gsap.fromTo(
         el,
         { opacity: 0, y: 36 },
         {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          delay: i * 0.12,
-          ease: 'power3.out',
+          opacity: 1, y: 0, duration: 0.7, delay: i * 0.12, ease: 'power3.out',
           scrollTrigger: { trigger: el, start: 'top 88%', once: true },
-        }
+        },
       );
     });
-  }, []);
+  }, { scope: sectionRef });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,29 +45,39 @@ export default function Contact() {
       if (res.ok) {
         setStatus('sent');
         form.reset();
-        setTimeout(() => setStatus('idle'), 4000);
+        setTimeout(() => setStatus('idle'), 5000);
       } else {
         setStatus('error');
-        setTimeout(() => setStatus('idle'), 4000);
+        setTimeout(() => setStatus('idle'), 5000);
       }
     } catch {
       setStatus('error');
-      setTimeout(() => setStatus('idle'), 4000);
+      setTimeout(() => setStatus('idle'), 5000);
     }
   };
 
   return (
     <section id="contact" ref={sectionRef}>
+      {/* Mobile-only big call button */}
+      <div className="contact-mobile-call gsap-fade">
+        <a href="tel:+38631316311" className="contact-call-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width={22} height={22}>
+            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.09-1.09a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z" />
+          </svg>
+          Pokliči zdaj: 031 316 311
+        </a>
+      </div>
+
       <div className="contact-grid">
         <div className="gsap-fade">
           <span className="section-tag">Kontakt</span>
           <h2 className="section-title">Stopite v stik z nami</h2>
-          <p className="section-desc">Za ponudbe, vprašanja ali sestanek nas kontaktirajte po telefonu ali e-pošti. Odzovemo se v najkrajšem možnem času.</p>
+          <p className="section-desc">Za ponudbe, vprašanja ali sestanek nas kontaktirajte po telefonu ali e-pošti.</p>
 
           <div className="contact-info-list">
             <div className="contact-info-item">
               <div className="contact-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width={20} height={20}>
                   <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" />
                 </svg>
               </div>
@@ -78,7 +89,7 @@ export default function Contact() {
 
             <div className="contact-info-item">
               <div className="contact-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width={20} height={20}>
                   <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.09-1.09a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z" />
                 </svg>
               </div>
@@ -90,7 +101,7 @@ export default function Contact() {
 
             <div className="contact-info-item">
               <div className="contact-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width={20} height={20}>
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" />
                 </svg>
               </div>
@@ -102,7 +113,7 @@ export default function Contact() {
 
             <div className="contact-info-item">
               <div className="contact-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width={20} height={20}>
                   <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
                 </svg>
               </div>
@@ -156,13 +167,19 @@ export default function Contact() {
               type="submit"
               className="form-submit"
               disabled={status === 'sending' || status === 'sent'}
-              style={status === 'sent' ? { background: '#4a7c2f' } : status === 'error' ? { background: '#b91c1c' } : {}}
             >
-              {status === 'sending' && 'Pošiljam...'}
-              {status === 'sent' && 'Poslano! Hvala za povpraševanje.'}
-              {status === 'error' && 'Napaka. Poskusite znova.'}
-              {status === 'idle' && 'Pošlji povpraševanje \u2192'}
+              {status === 'sending' ? 'Pošiljanje...' : 'Pošlji povpraševanje →'}
             </button>
+            {status === 'sent' && (
+              <p className="form-msg form-msg-success">
+                Sporočilo poslano! Odzvali se bomo v najkrajšem možnem času.
+              </p>
+            )}
+            {status === 'error' && (
+              <p className="form-msg form-msg-error">
+                Napaka pri pošiljanju. Poskusite znova.
+              </p>
+            )}
           </form>
         </div>
       </div>

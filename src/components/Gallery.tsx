@@ -4,21 +4,15 @@ import { useRef, useState, useEffect } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Image from 'next/image';
+import { galleryImages } from '@/data/gallery';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const galleryImages = [
-  { src: '/slike/web/3-traktor-prikolica-gozd-listje.jpg', alt: 'Traktor s prikolico v gozdu', cls: 'gi-1' },
-  { src: '/slike/web/4-slika-na-drevi.jpg', alt: 'Arboristika – delavec na drevesu', cls: 'gi-2' },
-  { src: '/slike/web/5-delavec-forwarder-gozd-jesen.jpg', alt: 'Delavec z forwarderjem v jesenskem gozdu', cls: 'gi-3' },
-  { src: '/slike/web/6-traktor-posek-veje-nebo.jpg', alt: 'Traktor pri poseku', cls: 'gi-4' },
-  { src: '/slike/web/7-traktor-prikolica-teren-gozd.jpg', alt: 'Traktor s prikolico na terenu', cls: 'gi-5' },
-  { src: '/slike/web/8-traktor-prikolica-posek-gozd.jpg', alt: 'Spravilo lesa v gozdu', cls: 'gi-6' },
-  { src: '/slike/web/9-delavec-forwarder-les.jpg', alt: 'Delavec pri nalaganju lesa', cls: 'gi-7' },
-];
+const INITIAL_COUNT = 6;
 
 const ZoomIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+  <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" width={14} height={14}>
     <circle cx="11" cy="11" r="8" />
     <line x1="21" y1="21" x2="16.65" y2="16.65" />
     <line x1="11" y1="8" x2="11" y2="14" />
@@ -29,26 +23,39 @@ const ZoomIcon = () => (
 export default function Gallery() {
   const [lbIdx, setLbIdx] = useState<number | null>(null);
   const [fadeImg, setFadeImg] = useState(true);
+  const [showAll, setShowAll] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
+  const visibleImages = showAll ? galleryImages : galleryImages.slice(0, INITIAL_COUNT);
 
   useGSAP(() => {
     if (!sectionRef.current) return;
-    const items = sectionRef.current.querySelectorAll('.gsap-fade');
-    items.forEach((el, i) => {
-      gsap.fromTo(
-        el,
-        { opacity: 0, y: 36 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          delay: i * 0.1,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: el, start: 'top 88%', once: true },
-        }
-      );
-    });
-  }, []);
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const animateItems = (items: NodeListOf<Element>) => {
+      if (prefersReducedMotion) {
+        gsap.set(items, { opacity: 1, y: 0 });
+        return;
+      }
+      items.forEach((el, i) => {
+        gsap.fromTo(
+          el,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1, y: 0, duration: 0.6, delay: i * 0.07, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+          },
+        );
+      });
+    };
+
+    const header = sectionRef.current.querySelectorAll('.gallery-header, .gallery-show-all');
+    const items = sectionRef.current.querySelectorAll('.gallery-item');
+    animateItems(header);
+    animateItems(items);
+  }, { scope: sectionRef, dependencies: [showAll] });
 
   const closeLb = () => setLbIdx(null);
 
@@ -60,13 +67,15 @@ export default function Gallery() {
     }, 120);
   };
 
-  const openLb = (idx: number) => {
-    setLbIdx(idx);
-    setFadeImg(true);
+  const openLb = (idx: number) => { setLbIdx(idx); setFadeImg(true); };
+
+  const handleShowAll = () => {
+    setShowAll(true);
   };
 
   useEffect(() => {
     document.body.style.overflow = lbIdx !== null ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
   }, [lbIdx]);
 
   useEffect(() => {
@@ -80,41 +89,99 @@ export default function Gallery() {
     return () => document.removeEventListener('keydown', onKey);
   });
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    touchEndX.current = e.changedTouches[0].clientX;
+    const delta = touchStartX.current - touchEndX.current;
+    if (Math.abs(delta) > 50) moveLb(delta > 0 ? 1 : -1);
+  };
+
   return (
     <section id="gallery" ref={sectionRef}>
-      <div className="gallery-header gsap-fade">
+      <div className="gallery-header">
         <span className="section-tag">Galerija</span>
         <h2 className="section-title">Naše delo v slikah</h2>
         <p className="section-desc">Fotografije iz naših projektov v gozdu in na terenu.</p>
       </div>
 
-      <div className="gallery-grid">
-        {galleryImages.map((img, i) => (
+      <div className="gallery-masonry">
+        {visibleImages.map((img, i) => (
           <div
-            key={i}
-            className={`gallery-item ${img.cls} gsap-fade`}
-            onClick={() => openLb(i)}
+            key={img.src}
+            className="gallery-item"
+            onClick={() => openLb(galleryImages.indexOf(img))}
+            role="button"
+            tabIndex={0}
+            aria-label={`Odpri sliko: ${img.alt}`}
+            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') openLb(galleryImages.indexOf(img)); }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={img.src} alt={img.alt} loading="lazy" />
-            <span className="gallery-zoom-icon"><ZoomIcon /></span>
+            <Image
+              src={img.src}
+              alt={img.alt}
+              width={800}
+              height={600}
+              sizes="(max-width: 640px) 50vw, (max-width: 1200px) 33vw, 400px"
+              loading={i < 4 ? 'eager' : 'lazy'}
+              style={{ width: '100%', height: 'auto', display: 'block' }}
+            />
+            <div className="gallery-overlay">
+              <span className="gallery-zoom-icon"><ZoomIcon /></span>
+            </div>
           </div>
         ))}
       </div>
 
+      {!showAll && galleryImages.length > INITIAL_COUNT && (
+        <div className="gallery-show-all">
+          <button className="btn-show-all" onClick={handleShowAll}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width={16} height={16}>
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+            </svg>
+            Oglejte si vso galerijo — še {galleryImages.length - INITIAL_COUNT} fotografij
+          </button>
+        </div>
+      )}
+
       {/* Lightbox */}
-      <div className={`lightbox${lbIdx !== null ? ' open' : ''}`}>
+      <div
+        className={`lightbox${lbIdx !== null ? ' open' : ''}`}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Galerija slik"
+      >
         <div className="lb-backdrop" onClick={closeLb} />
         <button className="lb-close" onClick={closeLb} aria-label="Zapri">&#x2715;</button>
         <button className="lb-nav lb-prev" onClick={() => moveLb(-1)} aria-label="Prejšnja">&#x2039;</button>
         <div className="lb-img-wrap">
           {lbIdx !== null && (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img
+            <Image
               src={galleryImages[lbIdx].src}
               alt={galleryImages[lbIdx].alt}
-              style={{ opacity: fadeImg ? 1 : 0, transition: 'opacity 0.15s ease' }}
+              width={1200}
+              height={800}
+              sizes="90vw"
+              priority
+              style={{
+                maxWidth: 'min(90vw, 900px)',
+                maxHeight: '80vh',
+                width: 'auto',
+                height: 'auto',
+                objectFit: 'contain',
+                borderRadius: '8px',
+                boxShadow: '0 32px 80px rgba(0,0,0,0.7)',
+                display: 'block',
+                opacity: fadeImg ? 1 : 0,
+                transition: 'opacity 0.15s ease',
+              }}
             />
+          )}
+          {lbIdx !== null && (
+            <p className="lb-caption">{galleryImages[lbIdx].alt}</p>
           )}
         </div>
         <button className="lb-nav lb-next" onClick={() => moveLb(1)} aria-label="Naslednja">&#x203A;</button>
@@ -124,6 +191,8 @@ export default function Gallery() {
               key={i}
               className={`lb-dot${i === lbIdx ? ' active' : ''}`}
               onClick={() => { setFadeImg(false); setTimeout(() => { setLbIdx(i); setFadeImg(true); }, 120); }}
+              role="button"
+              aria-label={`Slika ${i + 1}`}
             />
           ))}
         </div>
