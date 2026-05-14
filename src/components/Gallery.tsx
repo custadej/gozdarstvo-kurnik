@@ -141,10 +141,10 @@ export default function Gallery() {
       {!showAll && galleryImages.length > INITIAL_COUNT && (
         <div className="gallery-show-all">
           <button className="btn-show-all" onClick={handleShowAll}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width={16} height={16}>
-              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+            Pokaži vse ({galleryImages.length})
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" width={12} height={12}>
+              <line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>
             </svg>
-            Oglejte si vso galerijo — še {galleryImages.length - INITIAL_COUNT} fotografij
           </button>
         </div>
       )}

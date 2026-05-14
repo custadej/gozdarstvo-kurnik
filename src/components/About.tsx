@@ -69,7 +69,7 @@ export default function About() {
           <div className="about-visual" ref={imgRef}>
             <div className="about-photo-wrapper">
               <Image
-                src="/slike/web/2-portret-blaz-kurnik.png"
+                src="/slike/web/2-blaz-kurnik.png"
                 alt="Blaž Kurnik – Gozdarstvo Kurnik"
                 fill
                 sizes="(max-width: 900px) 100vw, 50vw"

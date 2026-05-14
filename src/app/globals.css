@@ -795,21 +795,22 @@ section { padding: 100px 5vw; }
 .gallery-item:hover .gallery-zoom-icon { transform: scale(1); }
 
 .gallery-show-all {
-  max-width: 1200px; margin: 2.5rem auto 0;
+  max-width: 1200px; margin: 2rem auto 0;
   display: flex; justify-content: center;
 }
 .btn-show-all {
-  display: inline-flex; align-items: center; gap: 8px;
+  display: inline-flex; align-items: center; gap: 6px;
   background: transparent;
-  border: 1.5px solid rgba(106,171,58,0.45);
-  color: var(--green-light);
+  border: none;
+  border-bottom: 1px solid rgba(106,171,58,0.4);
+  color: rgba(106,171,58,0.75);
   font-family: var(--font-inter), sans-serif;
-  font-size: 0.9rem; font-weight: 600;
-  padding: 0 2rem; height: 50px;
-  border-radius: var(--r-sm); cursor: pointer;
-  transition: all 0.25s; min-height: 50px;
+  font-size: 0.75rem; font-weight: 500; letter-spacing: 0.04em;
+  padding: 0 0 4px; height: auto;
+  border-radius: 0; cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
 }
-.btn-show-all:hover { background: rgba(106,171,58,0.1); border-color: var(--green-light); }
+.btn-show-all:hover { color: var(--green-light); border-color: var(--green-light); }
 
 /* Lightbox */
 .lightbox {
