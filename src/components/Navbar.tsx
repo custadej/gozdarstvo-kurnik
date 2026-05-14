@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const touchHandled = useRef(false);
 
   useEffect(() => {
     const onScroll = () => {
@@ -26,6 +27,29 @@ export default function Navbar() {
     document.addEventListener('click', close);
     return () => document.removeEventListener('click', close);
   }, [menuOpen]);
+
+  // Body scroll lock + Lenis control
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    const lenis = window.lenis;
+    if (lenis) menuOpen ? lenis.stop() : lenis.start();
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    touchHandled.current = true;
+    setMenuOpen(v => !v);
+  };
+
+  const handleClick = () => {
+    if (touchHandled.current) {
+      touchHandled.current = false;
+      return;
+    }
+    setMenuOpen(v => !v);
+  };
 
   const close = () => setMenuOpen(false);
 
@@ -62,7 +86,15 @@ export default function Navbar() {
           className={`hamburger${menuOpen ? ' is-open' : ''}`}
           aria-label={menuOpen ? 'Zapri meni' : 'Odpri meni'}
           aria-expanded={menuOpen}
-          onClick={() => setMenuOpen(v => !v)}
+          onTouchStart={handleTouchStart}
+          onClick={handleClick}
+          style={{
+            touchAction: 'manipulation',
+            WebkitTapHighlightColor: 'transparent',
+            cursor: 'pointer',
+            position: 'relative',
+            zIndex: 101,
+          }}
         >
           <span /><span /><span />
         </button>
@@ -70,7 +102,11 @@ export default function Navbar() {
 
       {/* Mobile dropdown */}
       {menuOpen && (
-        <ul className="nav-mobile-menu" onClick={close}>
+        <ul
+          className="nav-mobile-menu"
+          onClick={close}
+          style={{ touchAction: 'auto', pointerEvents: 'auto' }}
+        >
           <li><a href="#about">O nas</a></li>
           <li><a href="#services">Storitve</a></li>
           <li><a href="#gallery">Galerija</a></li>
