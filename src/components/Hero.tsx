@@ -3,7 +3,6 @@
 import { Fragment, useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import Image from 'next/image';
 
 const titleLine1 = ['Urejanje', 'gozda,'];
 const titleLine2 = ['naša', 'strast.'];
@@ -50,16 +49,12 @@ export default function Hero() {
 
   return (
     <section id="hero">
-      <div className="hero-photo-wrapper">
-        <Image
-          src="/slike/web/1-traktor-forwarder-bliznji-pogled.jpg"
-          alt="Gozdarstvo Kurnik pri delu"
-          fill
-          priority
-          sizes="100vw"
-          style={{ objectFit: 'cover', objectPosition: 'center 35%' }}
-        />
-      </div>
+      <div className="hero-photo-wrapper" style={{
+        backgroundImage: 'url("/slike/web/1-traktor-forwarder-bliznji-pogled.jpg")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center 35%',
+        backgroundRepeat: 'no-repeat',
+      }} />
       <div className="hero-bg" />
 
       <div className="hero-content" ref={contentRef}>

@@ -214,27 +214,8 @@ nav.scrolled {
 }
 
 /* Scroll-to-top */
-#scrollTop {
-  position: fixed;
-  bottom: 24px; right: 24px; top: auto;
-  z-index: 50;
-  width: 46px; height: 46px;
-  background: var(--green-accent);
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.3s, transform 0.3s, background 0.2s;
-  box-shadow: 0 4px 18px rgba(74,124,47,0.45);
-}
-#scrollTop.visible { opacity: 1; transform: translateY(0); }
-#scrollTop:hover { background: var(--green-light); }
 @media (max-width: 768px) {
-  #scrollTop { bottom: 80px; right: 16px; }
+  :root { --scroll-btn-bottom: 90px; }
 }
 
 /* ════════════════════════════════
@@ -258,9 +239,25 @@ nav.scrolled {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background:
-    linear-gradient(to right, rgba(8,16,8,0.96) 0%, rgba(10,20,10,0.82) 42%, rgba(10,20,10,0.38) 72%, transparent 100%),
-    linear-gradient(to top, rgba(8,16,8,0.7) 0%, transparent 50%);
+  background: linear-gradient(
+    105deg,
+    rgba(10,20,10,0.92) 0%,
+    rgba(13,26,13,0.78) 35%,
+    rgba(13,26,13,0.35) 60%,
+    rgba(0,0,0,0.05) 100%
+  );
+}
+@media (max-width: 768px) {
+  .hero-photo-wrapper { background-position: 70% center !important; }
+  .hero-bg {
+    background: linear-gradient(
+      to top,
+      rgba(10,20,10,0.95) 0%,
+      rgba(10,20,10,0.75) 40%,
+      rgba(10,20,10,0.25) 70%,
+      rgba(0,0,0,0.05) 100%
+    );
+  }
 }
 .hero-content {
   position: relative;

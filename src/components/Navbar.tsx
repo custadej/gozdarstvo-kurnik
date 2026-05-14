@@ -6,13 +6,14 @@ import Image from 'next/image';
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showScroll, setShowScroll] = useState(false);
   const touchHandled = useRef(false);
 
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 80);
-      const btn = document.getElementById('scrollTop');
-      if (btn) btn.classList.toggle('visible', window.scrollY > 400);
+      const y = window.scrollY;
+      setScrolled(y > 80);
+      setShowScroll(y > 300);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -54,6 +55,7 @@ export default function Navbar() {
   const close = () => setMenuOpen(false);
 
   return (
+    <>
     <nav className={scrolled ? 'scrolled' : ''}>
       {/* Logo — always left */}
       <a href="#hero" className="nav-logo">
@@ -123,16 +125,38 @@ export default function Navbar() {
         </ul>
       )}
 
+    </nav>
+
+    {showScroll && (
       <button
-        id="scrollTop"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="Na vrh"
+        style={{
+          position: 'fixed',
+          bottom: 'var(--scroll-btn-bottom, 24px)',
+          right: '16px',
+          top: 'auto',
+          zIndex: 50,
+          width: '48px',
+          height: '48px',
+          backgroundColor: 'var(--green-accent, #4a7c2f)',
+          borderRadius: '10px',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 4px 18px rgba(74,124,47,0.45)',
+          touchAction: 'manipulation',
+          WebkitTapHighlightColor: 'transparent',
+        }}
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"
           strokeLinecap="round" width={20} height={20}>
           <polyline points="18 15 12 9 6 15" />
         </svg>
       </button>
-    </nav>
+    )}
+    </>
   );
 }
