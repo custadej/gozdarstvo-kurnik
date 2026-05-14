@@ -216,7 +216,7 @@ nav.scrolled {
 /* Scroll-to-top */
 #scrollTop {
   position: fixed;
-  bottom: 24px; right: 24px;
+  bottom: 24px; right: 24px; top: auto;
   z-index: 50;
   width: 46px; height: 46px;
   background: var(--green-accent);
@@ -233,6 +233,9 @@ nav.scrolled {
 }
 #scrollTop.visible { opacity: 1; transform: translateY(0); }
 #scrollTop:hover { background: var(--green-light); }
+@media (max-width: 768px) {
+  #scrollTop { bottom: 80px; right: 16px; }
+}
 
 /* ════════════════════════════════
    HERO
