@@ -50,9 +50,9 @@ export default function Hero() {
   return (
     <section id="hero">
       <div className="hero-photo-wrapper" style={{
-        backgroundImage: 'url("/slike/web/1-traktor-forwarder-bliznji-pogled.jpg")',
+        backgroundImage: 'url("/slike/web/11-traktor-zerjav-dviga-les.jpg")',
         backgroundSize: 'cover',
-        backgroundPosition: 'center 35%',
+        backgroundPosition: '60% 70%',
         backgroundRepeat: 'no-repeat',
       }} />
       <div className="hero-bg" />

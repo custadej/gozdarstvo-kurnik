@@ -131,25 +131,7 @@ export default function Navbar() {
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="Na vrh"
-        style={{
-          position: 'fixed',
-          bottom: 'var(--scroll-btn-bottom, 24px)',
-          right: '16px',
-          top: 'auto',
-          zIndex: 50,
-          width: '48px',
-          height: '48px',
-          backgroundColor: 'var(--green-accent, #4a7c2f)',
-          borderRadius: '10px',
-          border: 'none',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 4px 18px rgba(74,124,47,0.45)',
-          touchAction: 'manipulation',
-          WebkitTapHighlightColor: 'transparent',
-        }}
+        className="scroll-top-btn"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"
           strokeLinecap="round" width={20} height={20}>
