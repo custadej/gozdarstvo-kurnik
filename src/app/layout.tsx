@@ -17,7 +17,10 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://gozdarstvo-kurnik.si'),
-  title: 'Gozdarstvo Kurnik',
+  title: {
+    default: 'Gozdarstvo Kurnik',
+    template: '%s | Gozdarstvo Kurnik',
+  },
   icons: {
     icon: '/slike/web/0-logotip.png',
     shortcut: '/slike/web/0-logotip.png',
@@ -57,8 +60,10 @@ export const metadata: Metadata = {
 
 const localBusinessSchema = {
   '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
+  '@type': ['LocalBusiness', 'ProfessionalService'],
   name: 'Gozdarstvo Kurnik',
+  alternateName: 'Gozdarstvo Kurnik – Blaž Kurnik',
+  legalName: 'Blaž Kurnik, dopolnilna dejavnost',
   description: 'Profesionalne gozdarske storitve. Sečnja, spravilo lesa, vzdrževanje gozdnih poti.',
   url: 'https://gozdarstvo-kurnik.si',
   telephone: '+38631316311',
@@ -88,6 +93,19 @@ const websiteSchema = {
   url: 'https://gozdarstvo-kurnik.si',
 };
 
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Gozdarstvo Kurnik',
+      item: 'https://www.gozdarstvo-kurnik.si',
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -101,6 +119,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
         />
       </head>
       <body>{children}</body>
