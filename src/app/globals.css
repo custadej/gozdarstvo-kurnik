@@ -216,9 +216,10 @@ nav.scrolled {
 /* Scroll-to-top */
 .scroll-top-btn {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: 16px;
+  right: 16px;
   top: auto;
+  left: auto;
   z-index: 50;
   width: 48px;
   height: 48px;
@@ -232,14 +233,6 @@ nav.scrolled {
   box-shadow: 0 4px 18px rgba(74,124,47,0.45);
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-}
-@media (max-width: 768px) {
-  .scroll-top-btn {
-    bottom: 100px;
-    right: 12px;
-    width: 40px;
-    height: 40px;
-  }
 }
 
 /* ════════════════════════════════
@@ -1062,8 +1055,8 @@ footer {
 }
 .footer-legal { font-size: 0.72rem; color: rgba(255,255,255,0.2); }
 .footer-credit { font-size: 0.72rem; color: rgba(255,255,255,0.2); }
-.footer-credit a { color: rgba(255,255,255,0.35); text-decoration: none; }
-.footer-credit a:hover { color: rgba(255,255,255,0.65); }
+.footer-credit a { color: rgba(255,255,255,0.3); text-decoration: underline; text-decoration-color: rgba(255,255,255,0.15); text-underline-offset: 2px; }
+.footer-credit a:hover { color: rgba(255,255,255,0.6); text-decoration-color: rgba(255,255,255,0.4); }
 
 /* ════════════════════════════════
    GSAP initial state
@@ -1090,8 +1083,14 @@ footer {
 
 @media (max-width: 768px) {
   .hero-badge {
-    background: rgba(106,171,58,0.35);
-    border-color: rgba(106,171,58,0.6);
+    background: rgba(106,171,58,0.20);
+    border-color: rgba(106,171,58,0.4);
+    font-weight: 700;
+  }
+  .hero-title { font-weight: 800; }
+  .hero-desc {
+    font-weight: 500;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
   }
 }
 
@@ -1130,6 +1129,7 @@ footer {
   .stat-divider { display: none; }
   .stat-num { font-size: 1.4rem; }
   .stat-item { flex: unset; }
+  .stat-hide-mobile { display: none; }
 
   /* About */
   .about-chips { grid-template-columns: 1fr; }

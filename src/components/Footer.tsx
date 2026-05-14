@@ -36,7 +36,7 @@ export default function Footer() {
               Zgornja Voličina 2, 2232 Voličina &bull; blazkurnik14@gmail.com
             </div>
             <div className="footer-credit">
-              Izdelava: <a href="https://cus.si" target="_blank" rel="noopener noreferrer">CUS</a>
+              Izdelava: <a href="https://cus.si" target="_blank" rel="noopener noreferrer">cus.si</a>
             </div>
           </div>
         </div>

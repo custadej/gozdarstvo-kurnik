@@ -103,8 +103,8 @@ export default function Hero() {
             <div className="stat-num" data-count="100" data-suffix="%">100%</div>
             <div className="stat-label">Zadovoljstvo strank</div>
           </div>
-          <div className="stat-divider" />
-          <div className="stat-item">
+          <div className="stat-divider stat-hide-mobile" />
+          <div className="stat-item stat-hide-mobile">
             <div className="stat-num">Po dogovoru</div>
             <div className="stat-label">Delovni čas</div>
           </div>
