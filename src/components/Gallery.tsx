@@ -81,7 +81,7 @@ export default function Gallery() {
     }
   }, [])
 
-  const displayed = galleryImages.slice(0, 4)
+  const displayed = galleryImages.slice(0, 6)
 
   return (
     <section id="gallery" style={{ background: 'var(--green-dark)', padding: '48px 20px' }}>
@@ -94,15 +94,14 @@ export default function Gallery() {
         </h2>
       </div>
 
-      {/* 2x2 grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+      <div className="gallery-grid">
         {displayed.map((img, i) => (
           <div
             key={i}
+            className="gallery-grid-item"
             onClick={() => open(i)}
-            style={{ aspectRatio: '1', overflow: 'hidden', borderRadius: '8px', cursor: 'pointer', position: 'relative' }}
           >
-            <Image src={img.src} alt={img.alt} fill style={{ objectFit: 'cover' }} sizes="45vw" />
+            <Image src={img.src} alt={img.alt} fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 45vw, 33vw" />
           </div>
         ))}
       </div>

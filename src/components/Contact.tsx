@@ -73,7 +73,16 @@ export default function Contact() {
               </div>
               <div className="contact-info-text">
                 <div className="label">Naslov</div>
-                <div className="value">Zgornja Voličina 2<br />2232 Voličina</div>
+                <div className="value">
+                  <a
+                    href="https://maps.google.com/?q=Zgornja+Voličina+2,+2232+Voličina,+Slovenija"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ textDecoration: 'none', color: 'inherit' }}
+                  >
+                    Zgornja Voličina 2<br />2232 Voličina
+                  </a>
+                </div>
               </div>
             </div>
 
@@ -113,6 +122,17 @@ export default function Contact() {
               </div>
             </div>
           </div>
+
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2759.5!2d15.982!3d46.423!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x477193b0a4b6b6b5%3A0x0!2sZgornja+Voli%C4%8Dina+2%2C+2232+Voli%C4%8Dina!5e0!3m2!1ssl!2ssi!4v1"
+            width="100%"
+            height="220"
+            style={{ border: 'none', marginTop: '24px' }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="contact-map"
+          />
         </div>
 
         <div className="contact-form gsap-fade">

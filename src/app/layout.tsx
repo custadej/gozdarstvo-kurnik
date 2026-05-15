@@ -80,8 +80,24 @@ const localBusinessSchema = {
     latitude: 46.4234,
     longitude: 15.9823,
   },
-  image: 'https://gozdarstvo-kurnik.si/slike/web/0-logotip.png',
-  logo: 'https://gozdarstvo-kurnik.si/slike/web/0-logotip.png',
+  logo: {
+    '@type': 'ImageObject',
+    url: 'https://www.gozdarstvo-kurnik.si/slike/web/0-logotip.png',
+    width: 512,
+    height: 512,
+  },
+  image: [
+    'https://www.gozdarstvo-kurnik.si/slike/web/0-logotip.png',
+    'https://www.gozdarstvo-kurnik.si/slike/web/blaz-na-harvesterju-gozd.jpg',
+  ],
+  founder: {
+    '@type': 'Person',
+    name: 'Blaž Kurnik',
+  },
+  employee: {
+    '@type': 'Person',
+    name: 'Blaž Kurnik',
+  },
   areaServed: ['Podravje', 'Ptuj', 'Maribor', 'Vzhodna Štajerska'],
   serviceType: ['Sečnja', 'Spravilo lesa', 'Vzdrževanje gozdnih poti', 'Nega gozda', 'Razrez hlodovine', 'Prodaja drv'],
 };
