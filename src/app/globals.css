@@ -47,6 +47,22 @@ body {
   animation: pageIn 0.35s ease forwards;
 }
 @keyframes pageIn { to { opacity: 1; } }
+@keyframes live-dot {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+}
+@keyframes live-ring {
+  0% { transform: scale(1); opacity: 1; }
+  75%, 100% { transform: scale(3); opacity: 0; }
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+@keyframes gentlePulse {
+  0%, 100% { background: rgba(74,124,47,0.08); border-color: rgba(74,124,47,0.25); box-shadow: none; }
+  50% { background: rgba(74,124,47,0.13); border-color: rgba(74,124,47,0.7); box-shadow: inset 0 0 0 1px rgba(74,124,47,0.3); }
+}
 
 /* ════════════════════════════════
    NAVBAR
@@ -289,9 +305,9 @@ nav.scrolled {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  background: rgba(106,171,58,0.14);
-  border: 1px solid rgba(106,171,58,0.32);
-  color: var(--green-light);
+  background: rgba(20,40,20,0.75);
+  border: 1px solid rgba(106,171,58,0.5);
+  color: #6aab3a;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -301,11 +317,21 @@ nav.scrolled {
   margin-bottom: 1.75rem;
 }
 .hero-badge-dot {
-  width: 6px; height: 6px;
-  background: var(--green-light);
+  width: 10px; height: 10px;
+  background: #7dc040;
   border-radius: 50%;
   flex-shrink: 0;
-  box-shadow: 0 0 6px var(--green-light);
+  position: relative;
+  box-shadow: 0 0 8px rgba(125,192,64,0.9);
+  animation: live-dot 2s ease-in-out infinite;
+}
+.hero-badge-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(125,192,64,0.7);
+  animation: live-ring 1.5s ease-out infinite;
 }
 
 .hero-title {
@@ -836,6 +862,11 @@ section { padding: 100px 5vw; }
   .gallery-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
   .gallery-grid-item { aspect-ratio: 1; }
   .gallery-grid-item:nth-child(n+5) { display: none; }
+  .gallery-grid-item img { will-change: transform; }
+  .gallery-grid-item:nth-child(1) img { animation: breathe 3s ease-in-out 0s infinite; }
+  .gallery-grid-item:nth-child(2) img { animation: breathe 3s ease-in-out 0.75s infinite; }
+  .gallery-grid-item:nth-child(3) img { animation: breathe 3s ease-in-out 1.5s infinite; }
+  .gallery-grid-item:nth-child(4) img { animation: breathe 3s ease-in-out 2.25s infinite; }
 }
 .btn-show-all {
   display: inline-flex; align-items: center; gap: 6px;
@@ -1164,8 +1195,78 @@ footer {
   .about-grid { margin-bottom: 0; }
   .about-text .section-desc { margin-bottom: 12px; }
 
-  /* Services */
-  .services-grid { gap: 12px; }
+  /* Services — minimalistične horizontalne kartice */
+  .services-grid { gap: 8px; }
+  .services-header { margin-bottom: 28px; }
+  .service-card {
+    flex-direction: row;
+    align-items: center;
+    padding: 14px 16px;
+    gap: 12px;
+    background: white;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    min-height: auto;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease, background 0.15s ease, border-color 0.15s ease;
+  }
+  .service-card.visible { opacity: 1; transform: translateY(0); }
+  .service-card::before { display: none; }
+  .service-card:hover { transform: translateY(0); }
+  .service-card:active {
+    background: rgba(45,80,22,0.02);
+    border-color: rgba(45,80,22,0.25);
+  }
+  .service-card-top { margin-bottom: 0; flex-shrink: 0; }
+  .service-num { display: none; }
+  .service-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2d5016 0%, #1a3010 100%);
+    border: none;
+    box-shadow: 0 2px 8px rgba(26,48,16,0.3);
+    flex-shrink: 0;
+  }
+  .service-icon svg { width: 18px; height: 18px; }
+  .service-title {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 0;
+    text-transform: none;
+    letter-spacing: 0;
+    color: #1a2e1a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .service-desc { display: none; }
+  .service-btn { min-height: auto; flex-shrink: 0; gap: 0; align-self: center; }
+  .service-btn-text { display: none; }
+  .service-btn svg { display: none; }
+  .service-btn::after {
+    content: 'VEČ →';
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #2d5016;
+    background: rgba(74,124,47,0.08);
+    border: 1px solid rgba(74,124,47,0.25);
+    border-radius: 20px;
+    padding: 5px 14px;
+    line-height: 1.4;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    animation: gentlePulse 2.5s ease-in-out infinite;
+  }
+  .services-grid > .service-card:nth-child(1) .service-btn::after { animation-delay: 0s; }
+  .services-grid > .service-card:nth-child(2) .service-btn::after { animation-delay: 0.4s; }
+  .services-grid > .service-card:nth-child(3) .service-btn::after { animation-delay: 0.8s; }
+  .services-grid > .service-card:nth-child(4) .service-btn::after { animation-delay: 1.2s; }
+  .services-grid > .service-card:nth-child(5) .service-btn::after { animation-delay: 1.6s; }
+  .services-grid > .service-card:nth-child(6) .service-btn::after { animation-delay: 2.0s; }
 
   /* Gallery — show carousel, hide masonry */
   .gallery-masonry { display: none !important; }
@@ -1173,11 +1274,9 @@ footer {
   .gallery-mobile-carousel { display: block; }
 
   .hero-badge {
-    background: #4a7c2f;
-    border: none;
-    color: white;
-    font-weight: 700;
-    opacity: 1;
+    background: rgba(20,40,20,0.75);
+    border: 1px solid rgba(106,171,58,0.5);
+    color: #6aab3a;
   }
   .hero-title {
     font-weight: 900;
@@ -1231,11 +1330,8 @@ footer {
   .about-cta { width: 100%; justify-content: center; }
   .about-badge-box { bottom: -1rem; left: -0.5rem; }
 
-  /* Services — compact cards, hide description */
+  /* Services — single column at 640px (design already set in 768px block) */
   .services-grid { grid-template-columns: 1fr; }
-  .service-card { padding: 1.25rem 1.1rem 1rem; }
-  .service-desc { display: none; }
-  .service-btn { min-height: 48px; }
 
   /* Gallery — masonry/show-all hidden at 768px; carousel handles mobile */
 
@@ -1276,4 +1372,6 @@ footer {
   }
   body { animation: none; opacity: 1; }
   .gsap-fade { opacity: 1; transform: none; }
+  .service-card { opacity: 1 !important; transform: none !important; }
+  .service-btn::after { animation: none !important; }
 }

@@ -14,20 +14,14 @@ export default function Contact() {
   useGSAP(() => {
     if (!sectionRef.current) return;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const items = sectionRef.current.querySelectorAll('.gsap-fade');
-    if (prefersReducedMotion) {
-      gsap.set(items, { opacity: 1, y: 0 });
-      return;
-    }
+    const items = sectionRef.current.querySelectorAll('.contact-anim');
+    if (prefersReducedMotion) return;
+    gsap.set(items, { opacity: 0, y: 36 });
     items.forEach((el, i) => {
-      gsap.fromTo(
-        el,
-        { opacity: 0, y: 36 },
-        {
-          opacity: 1, y: 0, duration: 0.7, delay: i * 0.12, ease: 'power3.out',
-          scrollTrigger: { trigger: el, start: 'top 88%', once: true },
-        },
-      );
+      gsap.to(el, {
+        opacity: 1, y: 0, duration: 0.7, delay: i * 0.12, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+      });
     });
   }, { scope: sectionRef });
 
@@ -59,7 +53,7 @@ export default function Contact() {
   return (
     <section id="contact" ref={sectionRef}>
       <div className="contact-grid">
-        <div className="gsap-fade">
+        <div className="contact-anim">
           <span className="section-tag">Kontakt</span>
           <h2 className="section-title">Stopite v stik z nami</h2>
           <p className="section-desc">Za ponudbe, vprašanja ali sestanek nas kontaktirajte po telefonu ali e-pošti.</p>
@@ -135,7 +129,7 @@ export default function Contact() {
           />
         </div>
 
-        <div className="contact-form gsap-fade">
+        <div className="contact-form contact-anim">
           <h3>Pošljite povpraševanje</h3>
           <form onSubmit={handleSubmit}>
             <div className="form-row">

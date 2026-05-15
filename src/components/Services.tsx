@@ -95,26 +95,51 @@ export default function Services() {
   useGSAP(() => {
     if (!sectionRef.current) return;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (window.innerWidth < 768) return; // IntersectionObserver handles mobile
     const cards = sectionRef.current.querySelectorAll('.service-card, .services-header');
     if (prefersReducedMotion) {
       gsap.set(cards, { opacity: 1, y: 0 });
       return;
     }
-    const mobile = window.innerWidth < 768;
     cards.forEach((el, i) => {
       gsap.fromTo(
         el,
         { opacity: 0, y: 36 },
         {
           opacity: 1, y: 0,
-          duration: mobile ? 0.35 : 0.7,
-          delay: i * (mobile ? 0.04 : 0.08),
+          duration: 0.7,
+          delay: i * 0.08,
           ease: 'power3.out',
-          scrollTrigger: { trigger: el, start: mobile ? 'top 95%' : 'top 88%', once: true },
+          scrollTrigger: { trigger: el, start: 'top 88%', once: true },
         },
       );
     });
   }, { scope: sectionRef });
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || window.innerWidth >= 768) return;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const cards = sectionRef.current?.querySelectorAll<HTMLElement>('.service-card');
+    if (!cards?.length) return;
+    if (prefersReducedMotion) {
+      cards.forEach(card => card.classList.add('visible'));
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      }),
+      { threshold: 0.1 },
+    );
+    cards.forEach((card, i) => {
+      card.style.transitionDelay = `${i * 0.08}s`;
+      observer.observe(card);
+    });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = activeIdx !== null ? 'hidden' : '';
@@ -142,7 +167,7 @@ export default function Services() {
             <h3 className="service-title">{svc.title}</h3>
             <p className="service-desc">{svc.desc}</p>
             <span className="service-btn">
-              Izvedi več
+              <span className="service-btn-text">Izvedi več</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width={14} height={14}>
                 <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
               </svg>
