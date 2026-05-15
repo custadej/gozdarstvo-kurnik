@@ -14,6 +14,9 @@ export default function Navbar() {
       const y = window.scrollY;
       setScrolled(y > 80);
       setShowScroll(y > 300);
+      if (y === 0 && window.location.hash) {
+        history.replaceState(null, '', window.location.pathname);
+      }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -58,7 +61,16 @@ export default function Navbar() {
     <>
     <nav className={scrolled ? 'scrolled' : ''}>
       {/* Logo — always left */}
-      <a href="#hero" className="nav-logo">
+      <a
+        href="#hero"
+        className="nav-logo"
+        onClick={(e) => {
+          e.preventDefault();
+          if (menuOpen) setMenuOpen(false);
+          window.dispatchEvent(new Event('closeLightbox'));
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      >
         <Image
           src="/slike/web/0-logotip.png"
           alt="Gozdarstvo Kurnik"

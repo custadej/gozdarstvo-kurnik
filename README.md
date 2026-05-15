@@ -10,7 +10,7 @@ The goal was a professional web presence at the **lowest possible annual cost** 
 
 1. **Code on GitHub** (this repo, public) — free
 2. **Hosting on Vercel** — free tier, auto-deploys on every push
-3. **Domain** — purchased on [hitrost.com](https://hitrost.com), connected as a custom domain in Vercel dashboard
+3. **Domain** — purchased on [Neoserv](https://www.neoserv.si), connected as a custom domain in Vercel dashboard
 
 **Client pays only the domain** (~€10–15/year). Everything else is free.
 
@@ -29,7 +29,7 @@ Migration of an existing static HTML page to **Next.js 16** with App Router, Typ
 | Animations | GSAP 3 + `@gsap/react` (ScrollTrigger) |
 | Email | Resend API |
 | Hosting | Vercel (free tier) |
-| Domain | hitrost.com → Vercel custom domain |
+| Domain | Neoserv → Vercel custom domain |
 
 ### Structure
 

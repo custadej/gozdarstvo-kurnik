@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+img { -webkit-touch-callout: none; }
 
 :root {
   /* Brand colours */
@@ -849,40 +850,76 @@ section { padding: 100px 5vw; }
   transform: scale(0.96); transition: transform 0.3s;
 }
 .lightbox.open .lb-img-wrap { transform: scale(1); }
-.lb-caption { color: rgba(255,255,255,0.45); font-size: 0.82rem; text-align: center; }
 .lb-backdrop { position: absolute; inset: 0; z-index: 0; }
 .lb-close {
-  position: fixed; top: 1.25rem; right: 1.5rem; z-index: 10;
-  width: 48px; height: 48px;
-  color: rgba(255,255,255,0.7);
-  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 10px; font-size: 1.05rem; cursor: pointer;
+  position: absolute; top: 12px; right: 12px; z-index: 10;
+  width: 36px; height: 36px;
+  color: var(--white);
+  background: rgba(0,0,0,0.6); border: none;
+  border-radius: 50%; font-size: 1rem; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s;
 }
-.lb-close:hover { background: rgba(255,255,255,0.15); color: #fff; }
+.lb-close:hover { background: rgba(0,0,0,0.85); }
 .lb-nav {
-  position: fixed; top: 50%; transform: translateY(-50%); z-index: 10;
-  width: 52px; height: 64px;
-  color: rgba(255,255,255,0.75);
-  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 12px; font-size: 1.6rem; cursor: pointer;
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;
+  width: 36px; height: 36px;
+  background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.3);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  border-radius: 50%; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  transition: background 0.2s, color 0.2s; user-select: none;
+  transition: background 0.2s; user-select: none;
+  touch-action: manipulation; pointer-events: auto;
 }
-.lb-nav:hover { background: rgba(255,255,255,0.14); color: #fff; }
-.lb-prev { left: 1.25rem; }
-.lb-next { right: 1.25rem; }
+.lb-nav:hover { background: rgba(0,0,0,0.45); }
+.lb-prev { left: 12px; }
+.lb-next { right: 12px; }
 .lb-counter {
   position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
-  z-index: 10; display: flex; gap: 6px;
+  z-index: 10; display: flex; gap: 5px; align-items: center;
 }
 .lb-dot {
   width: 6px; height: 6px; border-radius: 50%;
-  background: rgba(255,255,255,0.22); cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
+  background: rgba(255,255,255,0.35); cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
 }
-.lb-dot.active { background: var(--green-light); transform: scale(1.4); }
+.lb-dot.active { background: #6aab3a; width: 18px; border-radius: 3px; }
+.lb-img-slider { overflow: hidden; }
+
+/* Mobile carousel — hidden on desktop */
+.gallery-mobile-carousel { display: none; }
+.gallery-carousel-container {
+  overflow: hidden;
+  position: relative;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.gallery-carousel-track {
+  display: flex;
+  width: 100%;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateX(0);
+}
+.gallery-carousel-slide {
+  min-width: 100%;
+  width: 100%;
+  height: 260px;
+  position: relative;
+  flex-shrink: 0;
+  display: block;
+  cursor: pointer;
+}
+.gallery-carousel-dots {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 0 0;
+}
 
 /* ════════════════════════════════
    CONTACT
@@ -1082,6 +1119,25 @@ footer {
 }
 
 @media (max-width: 768px) {
+  /* Compact section spacing */
+  section { padding: 40px 20px; overflow-x: hidden; }
+  #gallery { padding: 32px 20px; }
+  footer { padding: 32px 20px 24px; }
+
+  /* About */
+  .about-chips { display: none; }
+  .about-cta { display: none; }
+  .about-grid { margin-bottom: 0; }
+  .about-text .section-desc { margin-bottom: 12px; }
+
+  /* Services */
+  .services-grid { gap: 12px; }
+
+  /* Gallery — show carousel, hide masonry */
+  .gallery-masonry { display: none !important; }
+  .gallery-show-all { display: none !important; }
+  .gallery-mobile-carousel { display: block; }
+
   .hero-badge {
     background: #4a7c2f;
     border: none;
@@ -1110,8 +1166,7 @@ footer {
   html { scroll-padding-top: 62px; }
   .nav-mobile-menu { top: 62px; }
 
-  /* Sections */
-  section { padding: 68px 1.2rem; overflow-x: hidden; }
+  /* Sections — base padding set in 768px block */
 
   /* Hero */
   #hero { min-height: 100svh; overflow-x: hidden; }
@@ -1148,28 +1203,7 @@ footer {
   .service-desc { display: none; }
   .service-btn { min-height: 48px; }
 
-  /* Gallery — 2x2 grid, square images */
-  .gallery-masonry {
-    columns: unset;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .gallery-item {
-    margin-bottom: 0;
-    aspect-ratio: 1 / 1;
-    overflow: hidden;
-  }
-  .gallery-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  /* Show only 4 images on mobile unless show-all is active */
-  .gallery-masonry:not(.show-all) .gallery-item:nth-child(n+5) { display: none; }
-  .gallery-show-all { margin-top: 1.25rem; }
-  .btn-show-all { width: 100%; justify-content: center; min-height: 52px; font-size: 1rem; }
-  .lb-nav { display: none; }
+  /* Gallery — masonry/show-all hidden at 768px; carousel handles mobile */
 
   /* Contact */
   .contact-mobile-call { display: block; }
@@ -1180,8 +1214,8 @@ footer {
   .contact-form { padding: 1.75rem; }
 
   /* Footer */
-  .footer-top { flex-direction: column; align-items: flex-start; gap: 1.25rem; }
-  .footer-nav { gap: 1.25rem; }
+  .footer-top { flex-direction: column; align-items: center; gap: 1.25rem; }
+  .footer-nav { gap: 24px; justify-content: center; }
   .footer-bottom { align-items: center; }
   .footer-sub { flex-direction: column; align-items: center; gap: 0.35rem; }
 

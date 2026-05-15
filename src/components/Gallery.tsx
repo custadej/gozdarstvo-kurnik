@@ -1,206 +1,164 @@
-'use client';
-
-import { useRef, useState, useEffect } from 'react';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Image from 'next/image';
-import { galleryImages } from '@/data/gallery';
-
-gsap.registerPlugin(ScrollTrigger);
-
-const INITIAL_COUNT = 6;
-
-const ZoomIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" width={14} height={14}>
-    <circle cx="11" cy="11" r="8" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    <line x1="11" y1="8" x2="11" y2="14" />
-    <line x1="8" y1="11" x2="14" y2="11" />
-  </svg>
-);
+'use client'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { createPortal } from 'react-dom'
+import Image from 'next/image'
+import { galleryImages } from '@/data/gallery'
 
 export default function Gallery() {
-  const [lbIdx, setLbIdx] = useState<number | null>(null);
-  const [fadeImg, setFadeImg] = useState(true);
-  const [showAll, setShowAll] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+  const [touchStartX, setTouchStartX] = useState(0)
+  const isOpen = lightboxIndex !== null
+  const overlayRef = useRef<HTMLDivElement>(null)
 
-  const visibleImages = showAll ? galleryImages : galleryImages.slice(0, INITIAL_COUNT);
+  const open = useCallback((index: number) => {
+    document.body.style.overflow = 'hidden'
+    document.body.style.touchAction = 'none'
+    setLightboxIndex(index)
+  }, [])
 
-  useGSAP(() => {
-    if (!sectionRef.current) return;
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const close = useCallback(() => {
+    document.body.style.overflow = ''
+    document.body.style.touchAction = ''
+    setLightboxIndex(null)
+  }, [])
 
-    const mobile = window.innerWidth < 768;
-    const animateItems = (items: NodeListOf<Element>) => {
-      if (prefersReducedMotion) {
-        gsap.set(items, { opacity: 1, y: 0 });
-        return;
-      }
-      items.forEach((el, i) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1, y: 0,
-            duration: mobile ? 0.3 : 0.6,
-            delay: i * (mobile ? 0.035 : 0.07),
-            ease: 'power3.out',
-            scrollTrigger: { trigger: el, start: mobile ? 'top 95%' : 'top 90%', once: true },
-          },
-        );
-      });
-    };
+  const next = useCallback(() => {
+    setLightboxIndex(i => i !== null ? (i + 1) % galleryImages.length : 0)
+  }, [])
 
-    const header = sectionRef.current.querySelectorAll('.gallery-header, .gallery-show-all');
-    const items = sectionRef.current.querySelectorAll('.gallery-item');
-    animateItems(header);
-    animateItems(items);
-  }, { scope: sectionRef, dependencies: [showAll] });
+  const prev = useCallback(() => {
+    setLightboxIndex(i => i !== null ? (i - 1 + galleryImages.length) % galleryImages.length : 0)
+  }, [])
 
-  const closeLb = () => setLbIdx(null);
-
-  const moveLb = (dir: number) => {
-    setFadeImg(false);
-    setTimeout(() => {
-      setLbIdx(prev => prev === null ? 0 : (prev + dir + galleryImages.length) % galleryImages.length);
-      setFadeImg(true);
-    }, 120);
-  };
-
-  const openLb = (idx: number) => { setLbIdx(idx); setFadeImg(true); };
-
-  const handleShowAll = () => {
-    setShowAll(true);
-  };
-
+  // Keyboard navigation
   useEffect(() => {
-    document.body.style.overflow = lbIdx !== null ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [lbIdx]);
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close()
+      if (e.key === 'ArrowRight') next()
+      if (e.key === 'ArrowLeft') prev()
+    }
+    if (isOpen) window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [isOpen, close, next, prev])
 
+  // Swipe down to close
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (lbIdx === null) return;
-      if (e.key === 'Escape') closeLb();
-      if (e.key === 'ArrowLeft') moveLb(-1);
-      if (e.key === 'ArrowRight') moveLb(1);
-    };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  });
+    if (!isOpen) return
+    let startY = 0
+    const handleTouchStart = (e: TouchEvent) => { startY = e.touches[0].clientY }
+    const handleTouchEnd = (e: TouchEvent) => {
+      const diff = Math.abs(e.changedTouches[0].clientY - startY)
+      if (diff > 60) close()
+    }
+    window.addEventListener('touchstart', handleTouchStart, { passive: true })
+    window.addEventListener('touchend', handleTouchEnd, { passive: true })
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchend', handleTouchEnd)
+    }
+  }, [isOpen, close])
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
+  // Non-passive touchmove on overlay to prevent scroll-under on iOS Safari
+  useEffect(() => {
+    const overlay = overlayRef.current
+    if (!overlay || !isOpen) return
+    const prevent = (e: TouchEvent) => e.preventDefault()
+    overlay.addEventListener('touchmove', prevent, { passive: false })
+    return () => overlay.removeEventListener('touchmove', prevent)
+  }, [isOpen])
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    touchEndX.current = e.changedTouches[0].clientX;
-    const delta = touchStartX.current - touchEndX.current;
-    if (Math.abs(delta) > 50) moveLb(delta > 0 ? 1 : -1);
-  };
+  // Navbar logo dispatches this event
+  useEffect(() => {
+    window.addEventListener('closeLightbox', close)
+    return () => window.removeEventListener('closeLightbox', close)
+  }, [close])
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = ''
+      document.body.style.touchAction = ''
+    }
+  }, [])
+
+  const displayed = galleryImages.slice(0, 4)
 
   return (
-    <section id="gallery" ref={sectionRef}>
-      <div className="gallery-header">
-        <span className="section-tag">Galerija</span>
-        <h2 className="section-title">Naše delo v slikah</h2>
-        <p className="section-desc">Fotografije iz naših projektov v gozdu in na terenu.</p>
+    <section id="gallery" style={{ background: 'var(--green-dark)', padding: '48px 20px' }}>
+      <div style={{ marginBottom: '24px' }}>
+        <span style={{ color: 'var(--green-light)', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+          — Galerija
+        </span>
+        <h2 style={{ fontFamily: 'var(--font-playfair)', color: 'white', fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', margin: '8px 0' }}>
+          Naše delo v slikah
+        </h2>
       </div>
 
-      <div className={`gallery-masonry${showAll ? ' show-all' : ''}`}>
-        {visibleImages.map((img, i) => (
+      {/* 2x2 grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+        {displayed.map((img, i) => (
           <div
-            key={img.src}
-            className="gallery-item"
-            onClick={() => openLb(galleryImages.indexOf(img))}
-            role="button"
-            tabIndex={0}
-            aria-label={`Odpri sliko: ${img.alt}`}
-            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') openLb(galleryImages.indexOf(img)); }}
+            key={i}
+            onClick={() => open(i)}
+            style={{ aspectRatio: '1', overflow: 'hidden', borderRadius: '8px', cursor: 'pointer', position: 'relative' }}
           >
-            <Image
-              src={img.src}
-              alt={img.alt}
-              width={800}
-              height={600}
-              sizes="(max-width: 640px) 50vw, (max-width: 1200px) 33vw, 400px"
-              loading={i < 4 ? 'eager' : 'lazy'}
-              style={{ width: '100%', height: 'auto', display: 'block' }}
-            />
-            <div className="gallery-overlay">
-              <span className="gallery-zoom-icon"><ZoomIcon /></span>
-            </div>
+            <Image src={img.src} alt={img.alt} fill style={{ objectFit: 'cover' }} sizes="45vw" />
           </div>
         ))}
       </div>
 
-      {!showAll && galleryImages.length > INITIAL_COUNT && (
-        <div className="gallery-show-all">
-          <button className="btn-show-all" onClick={handleShowAll}>
-            Pokaži vse ({galleryImages.length})
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" width={12} height={12}>
-              <line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>
-            </svg>
-          </button>
-        </div>
-      )}
+      {/* Lightbox — portal to body so position:fixed is always relative to viewport */}
+      {isOpen && lightboxIndex !== null && createPortal(
+        <div
+          ref={overlayRef}
+          style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100dvh', zIndex: 9999, background: 'rgba(0,0,0,0.95)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}
+          onClick={close}
+        >
+          {/* X */}
+          <button onClick={close} style={{ position: 'absolute', top: 16, right: 16, width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', fontSize: 20, cursor: 'pointer', zIndex: 10000, touchAction: 'manipulation' }}>✕</button>
 
-      {/* Lightbox */}
-      <div
-        className={`lightbox${lbIdx !== null ? ' open' : ''}`}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Galerija slik"
-      >
-        <div className="lb-backdrop" onClick={closeLb} />
-        <button className="lb-close" onClick={closeLb} aria-label="Zapri">&#x2715;</button>
-        <button className="lb-nav lb-prev" onClick={() => moveLb(-1)} aria-label="Prejšnja">&#x2039;</button>
-        <div className="lb-img-wrap">
-          {lbIdx !== null && (
-            <Image
-              src={galleryImages[lbIdx].src}
-              alt={galleryImages[lbIdx].alt}
-              width={1200}
-              height={800}
-              sizes="90vw"
-              priority
-              style={{
-                maxWidth: 'min(90vw, 900px)',
-                maxHeight: '80vh',
-                width: 'auto',
-                height: 'auto',
-                objectFit: 'contain',
-                borderRadius: '8px',
-                boxShadow: '0 32px 80px rgba(0,0,0,0.7)',
-                display: 'block',
-                opacity: fadeImg ? 1 : 0,
-                transition: 'opacity 0.15s ease',
-              }}
-            />
-          )}
-          {lbIdx !== null && (
-            <p className="lb-caption">{galleryImages[lbIdx].alt}</p>
-          )}
-        </div>
-        <button className="lb-nav lb-next" onClick={() => moveLb(1)} aria-label="Naslednja">&#x203A;</button>
-        <div className="lb-counter">
-          {galleryImages.map((_, i) => (
-            <span
-              key={i}
-              className={`lb-dot${i === lbIdx ? ' active' : ''}`}
-              onClick={() => { setFadeImg(false); setTimeout(() => { setLbIdx(i); setFadeImg(true); }, 120); }}
-              role="button"
-              aria-label={`Slika ${i + 1}`}
-            />
-          ))}
-        </div>
-      </div>
+          {/* Prev */}
+          <button onClick={(e) => { e.stopPropagation(); prev() }} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', color: 'white', fontSize: 22, cursor: 'pointer', zIndex: 10000, touchAction: 'manipulation' }}>‹</button>
+
+          {/* Image */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={(e) => setTouchStartX(e.touches[0].clientX)}
+            onTouchEnd={(e) => {
+              const diff = touchStartX - e.changedTouches[0].clientX
+              if (Math.abs(diff) > 50) diff > 0 ? next() : prev()
+            }}
+            style={{ position: 'relative', width: '90vw', height: '65vh' }}
+          >
+            <Image src={galleryImages[lightboxIndex].src} alt={galleryImages[lightboxIndex].alt} fill style={{ objectFit: 'contain' }} sizes="90vw" priority />
+          </div>
+
+          {/* Next */}
+          <button onClick={(e) => { e.stopPropagation(); next() }} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', color: 'white', fontSize: 22, cursor: 'pointer', zIndex: 10000, touchAction: 'manipulation' }}>›</button>
+
+          {/* Dots */}
+          <div onClick={(e) => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'row', gap: 6, padding: '16px 0', width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+            {galleryImages.map((_, i) => (
+              <span
+                key={i}
+                onClick={() => setLightboxIndex(i)}
+                style={{
+                  display: 'inline-block',
+                  width: i === lightboxIndex ? '18px' : '6px',
+                  height: '6px',
+                  minWidth: i === lightboxIndex ? '18px' : '6px',
+                  borderRadius: '999px',
+                  background: i === lightboxIndex ? '#6aab3a' : 'rgba(255,255,255,0.4)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  flexShrink: 0,
+                }}
+              />
+            ))}
+          </div>
+        </div>,
+        document.body
+      )}
     </section>
-  );
+  )
 }
